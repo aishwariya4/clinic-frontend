@@ -1,0 +1,296 @@
+:root{
+  --accent: #0066ff;
+  --accent-2: #16a34a;
+  --accent-3: #ef4444;
+  --ink: #000;            /* <- solid black */
+  --muted-ink: #000;      /* <- also black */
+  --bg: #fff;
+  --card: #fff;
+  --line: #e5e7eb;
+  --ring: rgba(0,102,255,.25);
+}
+
+/* 1) Safe gutters so content never hugs the screen edges */
+.page {
+  /* keep these; just ensure strong gutters on any screen */
+  padding-left: clamp(16px, 4vw, 40px);
+  padding-right: clamp(16px, 4vw, 40px);
+}
+
+.input, .select, .textarea { border-color: #dbeafe; }
+
+/* ---------- Header ---------- */
+.h1 {
+  font-size: clamp(22px, 2.2vw, 30px);
+  font-weight: 800;
+  letter-spacing: .2px;
+  margin: 6px 0 12px;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  color: black;
+  font-weight: 500;
+}
+
+.dot {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--line);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: #eef2ff;
+  color: #3730a3;
+  border: 1px solid #e0e7ff;
+}
+.badge.success { background: #ecfdf5; color: #065f46; border-color: #d1fae5; }
+.badge.warn    { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+
+/* ---------- Cards ---------- */
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow:
+    0 1px 1px rgba(2,8,23,.02),
+    0 6px 24px rgba(2,8,23,.06);
+}
+.card + .card { margin-top: 16px; }
+
+.card-title{
+  font-weight: 700;
+  font-size: 18px;
+  margin: 4px 0 14px;
+}
+
+.card button[type="submit"],
+.card .btn-primary {
+  display: inline-flex;
+  width: auto;         /* shrink to content */
+  padding-inline: 18px; /* nicer touch target */
+  border-radius: 12px;
+}
+
+/* ---------- Layouts ---------- */
+.grid-4{
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 10px;
+}
+.grid-3{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 10px;
+}
+@media (max-width: 960px){
+  .grid-4{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .grid-3{ grid-template-columns: repeat(1, minmax(0,1fr)); }
+}
+
+/* ---------- Inputs ---------- */
+.input, .select, .textarea, .btn {
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+}
+.textarea { padding: 12px; min-height: 130px; resize: vertical; }
+.input, .select, .textarea { border-color: #dbeafe; }      /* light blue */
+.input:focus, .select:focus, .textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--ring);
+}
+
+
+/* Sticky top toolbar */
+.toolbar{
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--bg);
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+/* Section tabs */
+.tabs{
+  display: flex;
+  gap: 8px;
+  margin-left: auto;      /* pushes tabs to the right */
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.tabs a{
+  text-decoration: none;
+  font-weight: 600;
+  border: 1px solid #dbeafe;
+  background: #eff6ff;
+  color: #1e40af;
+  padding: 8px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.tabs a:hover{ background: #dbeafe; }
+
+/* Optional: improve scroll-to anchor offset (so titles aren't hidden under toolbar) */
+[id] { scroll-margin-top: 72px; }
+
+
+
+/* ---------- Buttons ---------- */
+.btn {
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: transform .06s ease, background .2s ease, color .2s ease;
+}
+.btn:active { transform: translateY(1px); }
+
+.btn-primary{
+  background: var(--accent);
+  color: #fff;
+  border-color: transparent;
+}
+.btn-primary:hover{ filter: brightness(1.05); }
+
+.btn-ghost{
+  background: transparent;
+}
+.btn-ghost:hover{ background: rgba(148,163,184,.12); }
+
+/* ---------- Tables ---------- */
+.table-wrap{
+  overflow: auto;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+}
+.table{
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--card);
+}
+.table th, .table td{
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.table th{
+  font-weight: 700;
+  color: var(--muted-ink);
+  background: rgba(148,163,184,.07);
+}
+
+/* headings, meta text, table headers */
+.h1, .card-title, .meta, .table th, .muted { color: #000 !important; }
+
+/* inputs/selects text */
+.input, .select, .textarea, input, select, textarea { color: #000 !important; }
+
+/* placeholders (all browsers) */
+.input::placeholder,
+.textarea::placeholder,
+input::placeholder,
+textarea::placeholder { color: #000; opacity: 1; }
+::-webkit-input-placeholder { color: #000; opacity: 1; }
+::-moz-placeholder { color: #000; opacity: 1; }
+:-ms-input-placeholder { color: #000; opacity: 1; }
+:-moz-placeholder { color: #000; opacity: 1; }
+
+/* keep primary button text white for contrast */
+.btn-primary { color: #fff !important; }
+
+
+/* ---------- Helpers ---------- */
+.stack-16{ display: grid; gap: 16px; }
+.stack-12{ display: grid; gap: 12px; }
+.muted{ color: black }
+.hr{
+  height: 1px;
+  background: var(--line);
+  border: 0;
+  margin: 8px 0;
+}
+
+/* Sticky top toolbar */
+.toolbar{
+  position: sticky; top: 0; z-index: 20;
+  background: var(--bg);
+  padding: 10px 0;
+  display: grid;
+  grid-template-columns: auto 1fr auto; /* back | breadcrumb | tabs */
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+/* Breadcrumb */
+.breadcrumb{
+  display: flex; align-items: center; gap: 8px;
+  overflow: hidden;
+}
+.breadcrumb a{
+  text-decoration: none; color: #000;
+  padding: 6px 10px; border-radius: 999px;
+}
+.breadcrumb a:hover{ background: #eff6ff; border: 1px solid #dbeafe; }
+.breadcrumb .sep{ color: #94a3b8; }
+.breadcrumb .current{ font-weight: 800; }
+.crumb-patient{
+  max-width: 28ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Section tabs (right side) */
+.tabs{
+  display: flex; gap: 8px; margin-left: auto; overflow-x: auto; padding-bottom: 4px;
+}
+.tabs a{
+  text-decoration: none; font-weight: 600;
+  border: 1px solid #dbeafe; background: #eff6ff; color: #1e40af;
+  padding: 8px 12px; border-radius: 999px; white-space: nowrap;
+}
+.tabs a:hover{ background: #dbeafe; }
+
+/* Make anchor targets account for sticky toolbar */
+[id]{ scroll-margin-top: 72px; }
+
+/* stop buttons from stretching full width when inside grid containers */
+.stack-12 .btn { justify-self: start; }
+
+/* smaller reusable sizes */
+.btn-sm { padding: 8px 12px; font-size: 14px; border-radius: 10px; }
+.btn-xs { padding: 6px 10px; font-size: 13px; border-radius: 10px; }
+
+/* optional: a row wrapper that keeps buttons compact and aligned */
+.form-actions { display: flex; gap: 8px; align-items: center; }
+.form-actions .btn { width: auto; }
+
+
+
+/* ---------- Loading ---------- */
+.spinner{
+  width: 26px; height: 26px; border-radius: 50%;
+  border: 3px solid var(--line);
+  border-top-color: var(--accent);
+  animation: spin 1s linear infinite;
+  margin-right: 10px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading{
+  display: flex; align-items: center; gap: 10px; padding: 24px;
+  color: black;
+}

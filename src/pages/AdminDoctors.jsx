@@ -38,6 +38,31 @@ function buildTimeGrid(startHHMM = DAY_START, endHHMM = DAY_END, stepMin = SLOT_
   for (let t = start; t <= end - stepMin; t += stepMin) out.push(toHHMM(t));
   return out;
 }
+// In your Admin doctor scheduling component (e.g., AdminDoctor.jsx)
+function handleSave() {
+  if (!selectedDays.length) {
+    toast.warn("Please select at least one date before choosing times.");
+    return;
+  }
+  if (!selectedTimes.length && !slotRange) {
+    toast.warn("Please select at least one time or a time range.");
+    return;
+  }
+
+  const body = {
+  // whatever you already send:
+  days: selectedDays,            // or month/weekdays
+  times: selectedTimes,          // or slot_range
+  replace,
+  capacity,
+  // add this line:
+  commit: true
+};
+
+  api.put(`/api/admins/doctor/${doctorId}/slots`, body)
+    .then(({data}) => toast.success(`Saved: ${data.inserted} added, ${data.deleted} removed on ${data.total_days} day(s).`))
+    .catch((e) => toast.error(e?.response?.data?.message || "Save failed"));
+}
 
 /* ---------------------- axios client ---------------------- */
 const api = axios.create({ baseURL: API_BASE, withCredentials: true });
@@ -518,47 +543,49 @@ export default function AdminDoctors() {
   }
 
   /* ---------- save (editor) ---------- */
-  const saveDatesForDoctor = async () => {
-    if (!datesModalDoctor) return;
-    const todayISO = todayLocal();
+const saveDatesForDoctor = async () => {
+  if (!datesModalDoctor) return;
 
-    const days = Array.from(datesSet).filter((d) => d >= todayISO).sort();
-    if (!days.length) {
-      alert("Select at least one date.");
-      return;
-    }
-    if (!activeDay) {
-      alert("Pick a date first.");
-      return;
-    }
+  const todayISO = todayLocal();
+  const days = Array.from(datesSet).filter((d) => d >= todayISO).sort();
+  if (!days.length) { alert("Select at least one date."); return; }
+  if (!activeDay)   { alert("Pick a date first."); return; }
 
-    const entries = days.map((iso) => ({
-      day: iso,
-      times: Array.from((timeSetByDay[iso] ?? new Set())).sort(),
-    }));
+  // Build per-day entries and KEEP ONLY those that have times
+  const payloads = days.map((iso) => ({
+    day: iso,
+    times: Array.from((timeSetByDay[iso] ?? new Set())).sort(),
+  })).filter((e) => e.times.length > 0);
 
-    try {
-      setSaving(true);
-      await Promise.all(
-        entries.map((e) =>
-          api.put(endpoints.slotsPut(datesModalDoctor.id), {
-            day: e.day,
-            times: e.times,
-            capacity: 1,
-          })
-        )
-      );
+  if (!payloads.length) {
+    alert("Select at least one time for at least one selected date.");
+    return;
+  }
 
-      alert("Saved successfully");
-      closeDatesModal();
-      refreshLists();
-    } catch (e) {
-      console.error(e);
-      alert(e?.response?.data?.message || "Failed to save dates/slots");
-    } finally {
-      setSaving(false);
-    }
-  };
+  try {
+    setSaving(true);
+    await Promise.all(
+      payloads.map((p) =>
+        api.put(endpoints.slotsPut(datesModalDoctor.id), {
+          day: p.day,
+          times: p.times,
+          capacity: 1,
+          replace: true, // remove unselected, unbooked slots
+          commit: true   // ✅ required by backend
+        })
+      )
+    );
+    alert("Saved successfully");
+    closeDatesModal();
+    refreshLists();
+  } catch (e) {
+    console.error(e);
+    alert(e?.response?.data?.message || "Failed to save dates/slots");
+  } finally {
+    setSaving(false);
+  }
+};
+
 
   /* ---------- calendar click (editor) ---------- */
   const onCalendarToggle = async (iso) => {
